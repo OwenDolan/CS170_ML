@@ -39,10 +39,10 @@ void calcStdDev(vector<float> &stdDev, vector<float> &featureData, unsigned numF
     */
 
     //unsigned i = 0;
-    for (unsigned j = 0; j < numInstances; j++) {       //may need to swap here idk
+    for (unsigned i = 0; i < numFeatures; i++) {       //may need to swap here idk
         variance = 0.0;
-        mean = calcMean(featureData, j, numFeatures, numInstances);
-        for(unsigned i = 0; i < numFeatures; i++) {
+        mean = calcMean(featureData, i, numFeatures, numInstances);
+        for(unsigned j = 0; j < numInstances; j++) {
             variance += pow((featureData.at(i + j * numFeatures) - mean), 2);
         }
         stdDev.push_back(sqrt(variance/numInstances));
@@ -63,10 +63,10 @@ void normalize(vector<float> &normalizedData, vector<float> &featureData, vector
     //vector<float> normalizedData;
     float mean = 0.0;
     //unsigned i = 0;
-    for (unsigned j = 0; j < numInstances; j++) {       //may need to swap here idk
-        mean = calcMean(featureData, j, numFeatures, numInstances);
-        for(unsigned i = 0; i < numFeatures; i++) {
-            normalizedData.push_back((featureData.at(i + j * numFeatures) - mean)/stdDev.at(i + j * numFeatures));
+    for (unsigned i = 0; i < numFeatures; i++) {       //may need to swap here idk
+        mean = calcMean(featureData, i, numFeatures, numInstances);
+        for(unsigned j = 0; j < numInstances; j++) {
+            normalizedData.push_back((featureData.at(i + j * numFeatures) - mean)/stdDev.at(i));
         }
     }
     //return normalizedData;
@@ -112,14 +112,14 @@ int main() {
     vector<float> normalizedData;
     normalize(normalizedData, featureValues, stdDev, numFeatures, numInstances);
 
-    FeatureSearch search(numFeatures, featureValues);
-    vector<unsigned> featureSubset;
-
+    FeatureSearch search(normalizedData, classValues, numFeatures);
+    //vector<unsigned> featureSubset;
+    vector<unsigned> bestSubset;
     if (algoChoice == 1) {
         search.forwardSelection();
     }
     else if (algoChoice == 2) {
-        search.backwardElimination();
+        bestSubset = search.backwardElimination();
     }
     else {
         cout << "invalid choice.\nExiting..." << endl;
