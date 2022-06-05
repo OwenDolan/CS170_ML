@@ -14,7 +14,7 @@ float calcMean (vector<float> &featureData, unsigned feature, unsigned numFeatur
     float mean = 0.0;
     float sum = 0.0;
     for (unsigned j = 0; j < numInstances; j++) {       //may need to swap here idk
-        sum += featureData.at((feature + j) * (numFeatures));
+        sum += featureData.at(feature + j * numFeatures);
     }
     mean = sum/(numInstances);    //sketchy may cause problems
 
@@ -43,9 +43,10 @@ void calcStdDev(vector<float> &stdDev, vector<float> &featureData, unsigned numF
         variance = 0.0;
         mean = calcMean(featureData, j, numFeatures, numInstances);
         for(unsigned i = 0; i < numFeatures; i++) {
-            variance += pow((featureData.at((i + j) * numFeatures) - mean), 2);
+            variance += pow((featureData.at(i + j * numFeatures) - mean), 2);
         }
         stdDev.push_back(sqrt(variance/numInstances));
+
     }
 /*
    for(unsigned i = 0; i < numInstances; i++) {
@@ -58,14 +59,14 @@ void calcStdDev(vector<float> &stdDev, vector<float> &featureData, unsigned numF
    */
   //return stdDev;
 }
-void normalize(vector<float> &featureData, vector<float> &stdDev, unsigned numFeatures, unsigned numInstances) {
-    vector<float> normalizedData;
+void normalize(vector<float> &normalizedData, vector<float> &featureData, vector<float> &stdDev, unsigned numFeatures, unsigned numInstances) {
+    //vector<float> normalizedData;
     float mean = 0.0;
     //unsigned i = 0;
     for (unsigned j = 0; j < numInstances; j++) {       //may need to swap here idk
         mean = calcMean(featureData, j, numFeatures, numInstances);
         for(unsigned i = 0; i < numFeatures; i++) {
-            normalizedData.push_back((featureData.at((i + j) * numFeatures) - mean)/stdDev.at(j));
+            normalizedData.push_back((featureData.at(i + j * numFeatures) - mean)/stdDev.at(i + j * numFeatures));
         }
     }
     //return normalizedData;
@@ -108,7 +109,8 @@ int main() {
     int mean = 0;
     vector<float> stdDev;
     calcStdDev(stdDev, featureValues, numFeatures, numInstances);
-    normalize(featureValues, stdDev, numFeatures, numInstances);
+    vector<float> normalizedData;
+    normalize(normalizedData, featureValues, stdDev, numFeatures, numInstances);
 
     FeatureSearch search(numFeatures, featureValues);
     vector<unsigned> featureSubset;
