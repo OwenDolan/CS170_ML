@@ -1,4 +1,5 @@
 #include <vector>
+#include <cmath>
 using namespace std;
 class  NN_Classifier {
 public:
@@ -13,6 +14,6 @@ private:
         this->trainedData = trainingData;
         this->classes = c;
     } 
-    bool NN_Classifier::test(const vector<float>& testData) {
-        
+    bool NN_Classifier::test(NN_Classifier *classifier) {
+        float euclidDist = sqrt ()
     } 

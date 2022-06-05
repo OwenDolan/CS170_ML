@@ -10,5 +10,5 @@ private:
 };
 
     float Validator::validate(const vector<unsigned>& featureSubset, NN_Classifier *classifier,  vector<float>& normalizedData, vector<bool>& classValues){
-
+        
     }
