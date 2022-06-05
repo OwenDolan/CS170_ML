@@ -6,8 +6,8 @@ class DataExtraction {
 public:
     DataExtraction(unsigned numF, unsigned &numI); //pass file data over to constructor
     //~DataExtraction();
-    vector<float>* extractFeatures();
-    vector<bool>* extractClasses(unsigned &numInstances); 
+    void extractFeatures(vector<float>&);
+    void extractClasses(vector<bool>&, unsigned &numInstances); 
 
 private:
 unsigned numFeatures;
@@ -20,8 +20,8 @@ unsigned numInstances;
     }
 
 
-    vector<float>* DataExtraction::extractFeatures() {
-        vector<float> *features = new vector<float>;
+    void DataExtraction::extractFeatures(vector<float>& features) {
+       // vector<float> features;
 
         ifstream myData;     //fix to choose which data set to use (ask user in main loop)       may also define as private member variable that is initialized in constructor
         myData.open("../data/small-test-dataset.txt");
@@ -45,15 +45,15 @@ unsigned numInstances;
 
         for (int i = 0; i < lines.size(); i++) {
             if (lines.at(i) != 1 && lines.at(i) != 2) {
-                features->push_back(lines[i]);
+                features.push_back(lines[i]);
             }
         }
         myData.close();
-        return features;
+        //return features;
 
     }
 
-    vector<bool>* DataExtraction::extractClasses(unsigned &numInstances) {
+    void DataExtraction::extractClasses(vector<bool>& classes, unsigned &numInstances) {
         ifstream myData;     //fix to choose which data set to use (ask user in main loop)       may also define as private member variable that is initialized in constructor
         myData.open("../data/small-test-dataset.txt");
         vector<double> lines;
@@ -74,21 +74,22 @@ unsigned numInstances;
             throw out_of_range("error opening file");
         }
         numInstances = lines.size();
-        vector<bool> *classes = new vector<bool>;
+        numInstances--;
+        //vector<bool> classes;
 
         for (unsigned i = 0; i < lines.size(); i++) {
             if (int(lines.at(i)) == 1 ) {
-                classes->push_back(false);
+                classes.push_back(false);
             }
             else if (int(lines.at(i)) == 2 ) {
-                classes->push_back(true);
+                classes.push_back(true);
             }
             else {
                 cout << "invalid logic." << endl;
             }
         }
         myData.close();
-        return classes;
+        //return classes;
     }
 /*
         vector<bool>* DataExtraction::extractClasses() {

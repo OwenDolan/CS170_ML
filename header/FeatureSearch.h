@@ -3,15 +3,15 @@ using namespace std;
 
 class FeatureSearch {
 public:
-    FeatureSearch(unsigned numFeatures, vector< float > *featureSet);
+    FeatureSearch(unsigned numFeatures, vector< float > &featureSet);
     vector<unsigned> forwardSelection();
     vector<unsigned> backwardElimination();
 private:
     unsigned totalFeatures;
-    vector< float > *featureValues;
+    vector< float > featureValues;
 };
 
-FeatureSearch::FeatureSearch(unsigned numFeatures, vector< float > *featureSet) {
+FeatureSearch::FeatureSearch(unsigned numFeatures, vector< float > &featureSet) {
         totalFeatures = numFeatures;
         featureValues = featureSet;
 }

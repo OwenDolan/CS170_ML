@@ -9,20 +9,21 @@
 using namespace std;
 class DataExtraction;
 
-float calcMean (vector<float> *fD, unsigned feature, unsigned numFeatures, unsigned numInstances) {
-    vector<float> featureData = fD;
+float calcMean (vector<float> &featureData, unsigned feature, unsigned numFeatures, unsigned numInstances) {
+    //vector<float> featureData = fD;
     float mean = 0.0;
     float sum = 0.0;
     for (unsigned j = 0; j < numInstances; j++) {       //may need to swap here idk
-        sum += featureData->at((feature + j) * numFeatures);
-        mean = sum/(numInstances);    //sketchy may cause problems
+        sum += featureData.at((feature + j) * (numFeatures));
     }
+    mean = sum/(numInstances);    //sketchy may cause problems
+
     return mean;
 }
 
-vector<float>* calcStdDev(vector<float> *fD, unsigned numFeatures, unsigned numInstances) {
+void calcStdDev(vector<float> &stdDev, vector<float> &featureData, unsigned numFeatures, unsigned numInstances) {
     unsigned feature = 0;
-    vector<float> *stdDev = new vector<float>;
+    //vector<float> stdDev;
    //float val[5] = {12.5, 7.0, 10.0, 7.8, 15.5};
    float sum = 0.0;
     float variance = 0.0;
@@ -37,14 +38,14 @@ vector<float>* calcStdDev(vector<float> *fD, unsigned numFeatures, unsigned numI
     }
     */
 
-    unsigned i;
+    //unsigned i = 0;
     for (unsigned j = 0; j < numInstances; j++) {       //may need to swap here idk
         variance = 0.0;
-        mean = calcMean(featureData, i, numFeatures, numInstances);
-        for(i = 0; i < numFeatures; i++) {
-            variance += pow((featureData->at((i + j) * numFeatures) - mean), 2);
+        mean = calcMean(featureData, j, numFeatures, numInstances);
+        for(unsigned i = 0; i < numFeatures; i++) {
+            variance += pow((featureData.at((i + j) * numFeatures) - mean), 2);
         }
-        stdDev->push_back(sqrt(variance/numInstances));
+        stdDev.push_back(sqrt(variance/numInstances));
     }
 /*
    for(unsigned i = 0; i < numInstances; i++) {
@@ -55,19 +56,19 @@ vector<float>* calcStdDev(vector<float> *fD, unsigned numFeatures, unsigned numI
    variance=variance/numInstances;
    stdDeviation = sqrt(variance);
    */
-  return stdDev;
+  //return stdDev;
 }
-vector<float>* normalize(vector<float> *featureData, vector<float> *stdDev, unsigned numFeatures, unsigned numInstances) {
-    vector<float> *normalizedData = new vector<float>;
+void normalize(vector<float> &featureData, vector<float> &stdDev, unsigned numFeatures, unsigned numInstances) {
+    vector<float> normalizedData;
     float mean = 0.0;
-    unsigned i;
+    //unsigned i = 0;
     for (unsigned j = 0; j < numInstances; j++) {       //may need to swap here idk
-        mean = calcMean(featureData, i, numFeatures, numInstances);
-        for(i = 0; i < numFeatures; i++) {
-            normalizedData->push_back((featureData->at((i + j) * numFeatures) - mean)/stdDev->at(j));
+        mean = calcMean(featureData, j, numFeatures, numInstances);
+        for(unsigned i = 0; i < numFeatures; i++) {
+            normalizedData.push_back((featureData.at((i + j) * numFeatures) - mean)/stdDev.at(j));
         }
     }
-    return normalizedData;
+    //return normalizedData;
 }
 
 int main() {
@@ -96,13 +97,18 @@ int main() {
     }
 
     cout << "Beginning search..." << endl;
+
     unsigned numInstances = 0;
     DataExtraction data(numFeatures, numInstances);
-    vector<bool> *classValues = data.extractClasses(numInstances);
-    vector<float> *featureValues = data.extractFeatures();
+    vector<bool> classValues;
+    data.extractClasses(classValues, numInstances);
+    vector<float> featureValues;
+    data.extractFeatures(featureValues);
+
     int mean = 0;
-    vector<float> *stdDev = calcStdDev(featureValues, numFeatures, numInstances);
-    featureValues = normalize(featureValues, stdDev, numFeatures, numInstances);
+    vector<float> stdDev;
+    calcStdDev(stdDev, featureValues, numFeatures, numInstances);
+    normalize(featureValues, stdDev, numFeatures, numInstances);
 
     FeatureSearch search(numFeatures, featureValues);
     vector<unsigned> featureSubset;
