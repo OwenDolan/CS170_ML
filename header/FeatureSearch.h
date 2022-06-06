@@ -6,25 +6,27 @@ using namespace std;
 
 class FeatureSearch {
 public:
-    FeatureSearch(vector<float> &normalizedData, vector<bool> &classValues, unsigned numFeatures);
+    FeatureSearch(vector<float> &normalizedData, vector<bool> &classValues, unsigned numFeatures, unsigned numInstances);
     vector<unsigned> forwardSelection();
     vector<unsigned> backwardElimination();
     void recursiveSubsets(vector<unsigned>& A, vector<vector<unsigned> >& res, vector<unsigned>& subset, unsigned index);        //adapted from foreverrookie for optimality
     vector< vector<unsigned> > retFinalSubset(vector<unsigned>& initialSet);    //adapted from foreverrookie for optimality
 private:
     unsigned numFeatures;
-    NN_Classifier *classifier = new NN_Classifier;
-    Validator *val = new Validator;
+    unsigned numInstances;
+    NN_Classifier *classifier;
+    Validator *val;
 
     vector<float> normailizedData;
     vector<bool> classValues;
 };
 
-FeatureSearch::FeatureSearch(vector<float> &normalizedData, vector<bool> &classValues, unsigned numFeatures) {
+FeatureSearch::FeatureSearch(vector<float> &normal, vector<bool> &classValues, unsigned numFeatures, unsigned numInstances) {
         this->numFeatures = numFeatures;
-        this->normailizedData = normailizedData;
+        this->normailizedData = normal;
         this->classValues = classValues;
 }
+
 
 vector<unsigned> FeatureSearch::forwardSelection() {
     for (unsigned i = 0; i < pow(numFeatures, 2); i++) {
@@ -39,13 +41,29 @@ vector<unsigned> FeatureSearch::backwardElimination() {
     vector< vector<unsigned> > finalSubsets = retFinalSubset(initialSet);
     float accuracy = 0.0;
     vector<unsigned> bestSubset;
-    for (unsigned i = 0; i < finalSubsets.size(); i ++) {
-        float temp = val->validate(finalSubsets[i], classifier, normailizedData, classValues);
+    for (unsigned i = 1; i < finalSubsets.size(); i ++) {
+        unsigned featSize = finalSubsets[i].size();
+        float temp = val->validate(finalSubsets[i], normailizedData, classValues, numFeatures, featSize, numInstances);
+
+        cout << "For feature subsets: " << flush;
+        for (unsigned j = 0; j < finalSubsets[i].size(); j++) {
+             cout << finalSubsets[i][j] << " ";
+        }
+        cout << flush << "accuracy was " << temp << " percent." << endl;
+        
+
         if (temp > accuracy) {
             accuracy = temp;
             bestSubset = finalSubsets[i];
         }
     }
+
+    cout << "Feature subset: " << flush;
+    for (unsigned j = 0; j < bestSubset.size(); j++) {
+        cout << bestSubset[j] << " ";
+    }
+    cout << flush << " had the highest accuracy of " << accuracy << " percent." << endl;
+
 
     return bestSubset;
 }
@@ -58,7 +76,7 @@ void FeatureSearch::recursiveSubsets(vector<unsigned>& initialSet, vector<vector
         subset.push_back(initialSet[i]);
  
         // move onto the next element.
-        recursiveSubsets(initialSet, finalSubsets, subset, i++);
+        recursiveSubsets(initialSet, finalSubsets, subset, i + 1);
  
         // exclude the A[i] from subset and triggers
         // backtracking.

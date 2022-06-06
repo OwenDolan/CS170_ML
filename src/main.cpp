@@ -112,7 +112,7 @@ int main() {
     vector<float> normalizedData;
     normalize(normalizedData, featureValues, stdDev, numFeatures, numInstances);
 
-    FeatureSearch search(normalizedData, classValues, numFeatures);
+    FeatureSearch search(normalizedData, classValues, numFeatures, numInstances);
     //vector<unsigned> featureSubset;
     vector<unsigned> bestSubset;
     if (algoChoice == 1) {
@@ -125,6 +125,8 @@ int main() {
         cout << "invalid choice.\nExiting..." << endl;
         return 1; 
     }
+
+    
 
     return 0;
 }
