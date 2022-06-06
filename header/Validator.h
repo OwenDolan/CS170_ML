@@ -1,4 +1,5 @@
 #include <vector>
+#include <exception>
 #include "NN_Classifier.h"
 #pragma once
 using namespace std;
@@ -12,27 +13,53 @@ private:
 
     float Validator::validate(vector<unsigned>& featureSubset,  vector<float>& normalizedData, vector<bool>& classValues, unsigned numF, unsigned featSize, unsigned numI) {
 
-        NN_Classifier *classifier = new NN_Classifier(featSize, numI, classValues);
+        NN_Classifier classifier(featSize, numI, classValues);
         vector<float> trainingData;
         vector<bool> trainingClassData;
-        for (unsigned j = 0; j < featureSubset.size(); j++) {
-            for (unsigned i = 0; i < normalizedData.size(); i++) {
-                trainingData[j] = normalizedData.at(j + i * numF);
-                trainingClassData[j] = classValues.at(j + i * numF);
+        unsigned featureCounter = 0;
+        for (unsigned i = 0; i < featSize; i++) {
+            for (unsigned j = 0; j < numI; j++) {
+                try{
+                trainingData.push_back(normalizedData.at(featureSubset[i] + j * featSize));
+                }
+                catch (const std::out_of_range& e) {
+                    cout << "out of range line 23" << endl;
+                }
+                try {
+                if (j <101) {
+                    trainingClassData.push_back(classValues.at(j));
+
+                }
+                }
+                catch (const std::out_of_range& e) {
+                    cout << "out of range line 30" << endl;
+                }
             }
+            featureCounter++;
         }
 
         unsigned success = 0;
+        unsigned failures = 0;
 
-        classifier->train(trainingData, trainingClassData);
+        classifier.train(trainingData, trainingClassData);
 
-        for (unsigned i = 0; i < normalizedData.size(); i++) {
-            bool testResult = classifier->test(classifier, i);
-            if (testResult == trainingClassData[i]) {       //suspicious, can change classifier to return true or false based on if predicion is correct
+        for (unsigned j = 0; j < numI; j++) {
+            bool testResult = classifier.test(classifier, j, featSize);
+            try{
+            if (testResult == trainingClassData[j]) {       //suspicious, can change classifier to return true or false based on if predicion is correct
                 success++;
             }
-        }
+            
+            else {
+                failures++;
+            }
+            }
+            catch (const std::out_of_range& e) {
+                cout << "out of range Validator_Class line 49" << endl;
+                }
 
-        return (float)success / (float)normalizedData.size();
+        }
+        float accuracy = (float)success / ((float)failures + (float)success);
+        return accuracy;
 
     }

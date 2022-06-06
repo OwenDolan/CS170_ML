@@ -21,10 +21,11 @@ private:
     vector<bool> classValues;
 };
 
-FeatureSearch::FeatureSearch(vector<float> &normal, vector<bool> &classValues, unsigned numFeatures, unsigned numInstances) {
+FeatureSearch::FeatureSearch(vector<float> &normal, vector<bool> &classValues, unsigned numFeatures, unsigned numI) {
         this->numFeatures = numFeatures;
         this->normailizedData = normal;
         this->classValues = classValues;
+        this->numInstances = numI;
 }
 
 
@@ -41,7 +42,7 @@ vector<unsigned> FeatureSearch::backwardElimination() {
     vector< vector<unsigned> > finalSubsets = retFinalSubset(initialSet);
     float accuracy = 0.0;
     vector<unsigned> bestSubset;
-    for (unsigned i = 1; i < finalSubsets.size(); i ++) {
+    for (unsigned i = 0; i < finalSubsets.size(); i++) {
         unsigned featSize = finalSubsets[i].size();
         float temp = val->validate(finalSubsets[i], normailizedData, classValues, numFeatures, featSize, numInstances);
 

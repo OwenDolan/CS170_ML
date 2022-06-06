@@ -68,6 +68,9 @@ void normalize(vector<float> &normalizedData, vector<float> &featureData, vector
         for(unsigned j = 0; j < numInstances; j++) {
             normalizedData.push_back((featureData.at(i + j * numFeatures) - mean)/stdDev.at(i));
         }
+        //.push_back(vector<float>());
+        //normalizedData.push_back(vector<double>());
+
     }
     //return normalizedData;
 }
@@ -126,7 +129,7 @@ int main() {
         return 1; 
     }
 
-    
+
 
     return 0;
 }
