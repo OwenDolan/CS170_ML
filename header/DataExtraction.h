@@ -4,10 +4,10 @@
 using namespace std;
 class DataExtraction {
 public:
-    DataExtraction(unsigned numF, unsigned &numI); //pass file data over to constructor
+    DataExtraction(unsigned numF, unsigned &numI); 
     //~DataExtraction();
     void extractFeatures(vector<float>&);
-    void extractClasses(vector<bool>&, unsigned &numInstances); 
+    void extractClasses(vector<bool>&, unsigned &numInstances); //also counts numInstances
 
 private:
 unsigned numFeatures;

@@ -16,19 +16,19 @@ float calcMean (vector<float> &featureData, unsigned feature, unsigned numFeatur
     for (unsigned j = 0; j < numInstances; j++) {       //may need to swap here idk
         sum += featureData.at(feature + j * numFeatures);
     }
-    mean = sum/(numInstances);    //sketchy may cause problems
+    mean = sum/((float)numInstances);    //sketchy may cause problems
 
     return mean;
 }
 
 void calcStdDev(vector<float> &stdDev, vector<float> &featureData, unsigned numFeatures, unsigned numInstances) {
-    unsigned feature = 0;
+    //unsigned feature = 0;
     //vector<float> stdDev;
    //float val[5] = {12.5, 7.0, 10.0, 7.8, 15.5};
-   float sum = 0.0;
+   //float sum = 0.0;
     float variance = 0.0;
     float mean = 0.0;
-    float stdDeviation;
+    //float stdDeviation;
 /*
     for (unsigned j = 0; j < numInstances; j++) {       //may need to swap here idk
         for(unsigned i = 0; i < numFeatures; i++) {
@@ -45,7 +45,7 @@ void calcStdDev(vector<float> &stdDev, vector<float> &featureData, unsigned numF
         for(unsigned j = 0; j < numInstances; j++) {
             variance += pow((featureData.at(i + j * numFeatures) - mean), 2);
         }
-        stdDev.push_back(sqrt(variance/numInstances));
+        stdDev.push_back(sqrt(variance/((float)numInstances)));
 
     }
 /*
@@ -108,9 +108,9 @@ int main() {
 
     int mean = 0;
     vector<float> stdDev;
-    calcStdDev(stdDev, featureValues, numFeatures, numInstances);
+    calcStdDev(stdDev, featureValues, numFeatures, numInstances);       //calculates std deviation for normalization of data
     vector<float> normalizedData;
-    normalize(normalizedData, featureValues, stdDev, numFeatures, numInstances);
+    normalize(normalizedData, featureValues, stdDev, numFeatures, numInstances);        //normalizes data 
 
     FeatureSearch search(normalizedData, classValues, numFeatures, numInstances);
     //vector<unsigned> featureSubset;

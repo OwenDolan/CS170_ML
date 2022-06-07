@@ -6,7 +6,7 @@ using namespace std;
 
 class FeatureSearch {
 public:
-    FeatureSearch(vector<float> &normalizedData, vector<bool> &classValues, unsigned numFeatures, unsigned numInstances);
+    FeatureSearch(vector<float> &normalizedData, vector<bool> &classValues, unsigned numF, unsigned numI);
     vector<unsigned> forwardSelection();
     vector<unsigned> backwardElimination();
     void recursiveSubsets(vector<unsigned>& A, vector<vector<unsigned> >& res, vector<unsigned>& subset, unsigned index);        //adapted from foreverrookie for optimality
@@ -14,6 +14,7 @@ public:
 private:
     unsigned numFeatures;
     unsigned numInstances;
+    unsigned selectFeatures;
     NN_Classifier *classifier;
     Validator *val;
 
@@ -21,8 +22,9 @@ private:
     vector<bool> classValues;
 };
 
-FeatureSearch::FeatureSearch(vector<float> &normal, vector<bool> &classValues, unsigned numFeatures, unsigned numInstances) {
-        this->numFeatures = numFeatures;
+FeatureSearch::FeatureSearch(vector<float> &normal, vector<bool> &classValues, unsigned numF, unsigned numI) {
+        this->numFeatures = numF;
+        this->numInstances = numI;
         this->normailizedData = normal;
         this->classValues = classValues;
 }
@@ -41,9 +43,10 @@ vector<unsigned> FeatureSearch::backwardElimination() {
     vector< vector<unsigned> > finalSubsets = retFinalSubset(initialSet);
     float accuracy = 0.0;
     vector<unsigned> bestSubset;
-    for (unsigned i = 1; i < finalSubsets.size(); i ++) {
-        unsigned featSize = finalSubsets[i].size();
-        float temp = val->validate(finalSubsets[i], normailizedData, classValues, numFeatures, featSize, numInstances);
+    
+    for (unsigned i = 0; i < finalSubsets.size(); i ++) {
+        selectFeatures = finalSubsets[i].size();
+        float temp = val->validate(finalSubsets[i], normailizedData, classValues, numFeatures, selectFeatures, numInstances);
 
         cout << "For feature subsets: " << flush;
         for (unsigned j = 0; j < finalSubsets[i].size(); j++) {
