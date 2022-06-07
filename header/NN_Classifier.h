@@ -26,6 +26,7 @@ private:
     } 
     bool NN_Classifier::test(NN_Classifier classifier, unsigned testInstance) {
         double euclidDist = 0.0;
+        double tempEuclidDist = 0.0;
         double minDist;
         //priority_queue <double, vector<double>, greater<double> > minSum;
         vector<double> minSum;
@@ -35,24 +36,25 @@ private:
         deque<double> temp;
 
         //vector< vector
-        for (unsigned i = 0; i < classifier.numFeatures; i++) {
-            for (unsigned j = 0; j < classifier.numInstances; j++) {
+        for (unsigned i = 0; i < numFeatures; i++) {        //must go to each element specified in the subset, 
+            for (unsigned j = 0; j < numInstances; j++) {
                 if (j != testInstance) {
-                    temp.push_back(sqrt(abs(classifier.trainedData.at(i + testInstance * numFeatures) - (classifier.trainedData.at(i + j * numFeatures)))));
+                    tempEuclidDist = sqrt(abs(trainedData.at(i + testInstance * numFeatures) - (trainedData.at(i + j * numFeatures))));
+                    temp.push_back(tempEuclidDist);
                 }
             }
         }
 
-        for (unsigned j = 0; j < classifier.numInstances; j++) {     //can optimize finding minDist with stack or priority min queue
+        for (unsigned j = 0; j < numInstances; j++) {     //can optimize finding minDist with stack or priority min queue
             euclidDist = 0.0;
-            for (unsigned i = 0; i < classifier.numFeatures; i++) {
-                euclidDist += temp.at(j + i * classifier.numFeatures); 
+            for (unsigned i = 0; i < numFeatures; i++) {
+                euclidDist += temp.at(j + i * numFeatures); 
             }
             minSum.push_back(euclidDist);
         }
 
-        for (unsigned i = 0; i < classifier.numInstances; i++) {     //can optimize finding minDist with stack or priority min queue
-            if (classifier.numFeatures != 0) { //literally fucking unexplainable why this check is here
+        for (unsigned i = 0; i < numInstances; i++) {     //can optimize finding minDist with stack or priority min queue
+            if (numFeatures != 0) { //literally fucking unexplainable why this check is here
                 if (minSum[i] < closestNeighbor) {
                     closestNeighbor = minSum[i];
                     closestNeighborIndex = i;
